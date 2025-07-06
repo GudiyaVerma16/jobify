@@ -36,15 +36,36 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 // only when ready to deploy
 app.use(express.static(path.resolve(__dirname, "./client/build")));
 
-// CORS configuration
+// CORS configuration - Allow all Vercel domains and localhost
 app.use(
   cors({
-    origin: [
-      "https://jobify-smoky-theta.vercel.app",
-      "https://jobify.vercel.app",
-      "http://localhost:3000",
-      "http://localhost:5000",
-    ],
+    origin: function (origin, callback) {
+      // Allow requests with no origin (like mobile apps or curl requests)
+      if (!origin) return callback(null, true);
+
+      // Allow localhost for development
+      if (origin.startsWith("http://localhost:")) return callback(null, true);
+
+      // Allow all Vercel domains
+      if (origin.includes("vercel.app")) return callback(null, true);
+
+      // Allow specific known domains
+      const allowedOrigins = [
+        "https://jobify-smoky-theta.vercel.app",
+        "https://jobify-silk-seven.vercel.app",
+        "https://jobify.vercel.app",
+      ];
+
+      if (allowedOrigins.includes(origin)) return callback(null, true);
+
+      // For production, you might want to be more restrictive
+      if (process.env.NODE_ENV === "production") {
+        return callback(new Error("Not allowed by CORS"));
+      }
+
+      // For development, allow all origins
+      return callback(null, true);
+    },
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "Cookie"],
