@@ -74,19 +74,6 @@ const AppProvider = ({ children }) => {
   // axios configuration is now in config/axios.js
   // authFetch is imported from there
 
-  // Add logout handling to authFetch
-  authFetch.interceptors.response.use(
-    (response) => {
-      return response;
-    },
-    (error) => {
-      if (error.response.status === 401) {
-        logoutUser();
-      }
-      return Promise.reject(error);
-    }
-  );
-
   const displayAlert = () => {
     dispatch({ type: DISPLAY_ALERT });
     clearAlert();
