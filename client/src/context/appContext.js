@@ -109,9 +109,12 @@ const AppProvider = ({ children }) => {
         payload: { user, location, alertText },
       });
     } catch (error) {
+      // Handle cases where error.response might be undefined (network errors, CORS, etc.)
+      const errorMessage =
+        error.response?.data?.msg || error.message || "Something went wrong";
       dispatch({
         type: SETUP_USER_ERROR,
-        payload: { msg: error.response.data.msg },
+        payload: { msg: errorMessage },
       });
     }
     clearAlert();
@@ -135,10 +138,12 @@ const AppProvider = ({ children }) => {
         payload: { user, location },
       });
     } catch (error) {
-      if (error.response.status !== 401) {
+      if (error.response?.status !== 401) {
+        const errorMessage =
+          error.response?.data?.msg || error.message || "Something went wrong";
         dispatch({
           type: UPDATE_USER_ERROR,
-          payload: { msg: error.response.data.msg },
+          payload: { msg: errorMessage },
         });
       }
     }
@@ -165,10 +170,12 @@ const AppProvider = ({ children }) => {
       dispatch({ type: CREATE_JOB_SUCCESS });
       dispatch({ type: CLEAR_VALUES });
     } catch (error) {
-      if (error.response.status === 401) return;
+      if (error.response?.status === 401) return;
+      const errorMessage =
+        error.response?.data?.msg || error.message || "Something went wrong";
       dispatch({
         type: CREATE_JOB_ERROR,
-        payload: { msg: error.response.data.msg },
+        payload: { msg: errorMessage },
       });
     }
     clearAlert();
@@ -217,10 +224,12 @@ const AppProvider = ({ children }) => {
       dispatch({ type: EDIT_JOB_SUCCESS });
       dispatch({ type: CLEAR_VALUES });
     } catch (error) {
-      if (error.response.status === 401) return;
+      if (error.response?.status === 401) return;
+      const errorMessage =
+        error.response?.data?.msg || error.message || "Something went wrong";
       dispatch({
         type: EDIT_JOB_ERROR,
-        payload: { msg: error.response.data.msg },
+        payload: { msg: errorMessage },
       });
     }
     clearAlert();
@@ -231,10 +240,12 @@ const AppProvider = ({ children }) => {
       await authFetch.delete(`/jobs/${jobId}`);
       getJobs();
     } catch (error) {
-      if (error.response.status === 401) return;
+      if (error.response?.status === 401) return;
+      const errorMessage =
+        error.response?.data?.msg || error.message || "Something went wrong";
       dispatch({
         type: DELETE_JOB_ERROR,
-        payload: { msg: error.response.data.msg },
+        payload: { msg: errorMessage },
       });
     }
     clearAlert();
@@ -273,7 +284,8 @@ const AppProvider = ({ children }) => {
         payload: { user, location },
       });
     } catch (error) {
-      if (error.response.status === 401) return;
+      // Handle cases where error.response might be undefined (network errors, CORS, etc.)
+      if (error.response?.status === 401) return;
       logoutUser();
     }
   };
