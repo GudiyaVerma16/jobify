@@ -13,6 +13,7 @@ import helmet from "helmet";
 import xss from "xss-clean";
 import mongoSanitize from "express-mongo-sanitize";
 import cookieParser from "cookie-parser";
+import cors from "cors";
 // hello
 // db and authenticateUser
 import connectDB from "./db/connect.js";
@@ -34,6 +35,21 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 
 // only when ready to deploy
 app.use(express.static(path.resolve(__dirname, "./client/build")));
+
+// CORS configuration
+app.use(
+  cors({
+    origin: [
+      "https://jobify-smoky-theta.vercel.app",
+      "https://jobify.vercel.app",
+      "http://localhost:3000",
+      "http://localhost:5000",
+    ],
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "Cookie"],
+  })
+);
 
 app.use(express.json());
 app.use(helmet());
