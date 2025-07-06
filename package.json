@@ -12,7 +12,8 @@
     "server": "nodemon server --ignore client",
     "client": "npm start --prefix client",
     "start": "concurrently --kill-others-on-fail \" npm run server\" \" npm run client\"",
-    "generate-secret": "node generate-secret.js"
+    "generate-secret": "node generate-secret.js",
+    "add-demo-user": "node add-demo-user.js"
   },
   "keywords": [
     "mern",
