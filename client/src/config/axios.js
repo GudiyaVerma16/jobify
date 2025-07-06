@@ -15,6 +15,7 @@ const getBaseURL = () => {
 
 const authFetch = axios.create({
   baseURL: getBaseURL(),
+  withCredentials: true, // Important for cookies
 });
 
 // Request interceptor
