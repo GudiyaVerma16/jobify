@@ -288,8 +288,16 @@ const AppProvider = ({ children }) => {
   const getCurrentUser = async () => {
     console.log("👤 Starting getCurrentUser");
     dispatch({ type: GET_CURRENT_USER_BEGIN });
+
+    // Add a timeout to prevent hanging
+    const timeoutId = setTimeout(() => {
+      console.log("⏰ getCurrentUser timeout - setting userLoading to false");
+      dispatch({ type: LOGOUT_USER });
+    }, 10000); // 10 second timeout
+
     try {
       const { data } = await authFetch("/auth/getCurrentUser");
+      clearTimeout(timeoutId); // Clear timeout if request succeeds
       console.log("👤 getCurrentUser successful:", data);
 
       const { user, location } = data;
@@ -299,13 +307,21 @@ const AppProvider = ({ children }) => {
         payload: { user, location },
       });
     } catch (error) {
+      clearTimeout(timeoutId); // Clear timeout if request fails
       console.log("❌ getCurrentUser failed:", error);
       console.log("❌ Error response:", error.response?.data);
       console.log("❌ Error status:", error.response?.status);
 
       // Handle cases where error.response might be undefined (network errors, CORS, etc.)
-      if (error.response?.status === 401) return;
-      logoutUser();
+      if (error.response?.status === 401) {
+        console.log("👤 User not authenticated, setting userLoading to false");
+        // For 401 errors, we need to set userLoading to false so the app can proceed
+        dispatch({ type: LOGOUT_USER });
+        return;
+      }
+      // For other errors, also set userLoading to false
+      console.log("👤 Other error, setting userLoading to false");
+      dispatch({ type: LOGOUT_USER });
     }
   };
   useEffect(() => {
