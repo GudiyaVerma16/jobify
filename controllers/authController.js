@@ -49,6 +49,7 @@ const login = async (req, res) => {
   attachCookie({ res, token });
 
   console.log("🔐 Cookie set, response headers:", res.getHeaders());
+  console.log("🔐 Set-Cookie header:", res.getHeader("Set-Cookie"));
 
   user.password = undefined;
 

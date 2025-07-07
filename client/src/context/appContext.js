@@ -86,9 +86,18 @@ const AppProvider = ({ children }) => {
   };
 
   const setupUser = async ({ currentUser, endPoint, alertText }) => {
+    console.log("🔐 Starting setupUser for endpoint:", endPoint);
+    console.log("🔐 Current user data:", {
+      email: currentUser.email,
+      name: currentUser.name,
+    });
+
     dispatch({ type: SETUP_USER_BEGIN });
     try {
       const { data } = await authFetch.post(`/auth/${endPoint}`, currentUser);
+
+      console.log("🔐 Login/Register successful, response data:", data);
+      console.log("🔐 Response headers:", data.headers);
 
       const { user, location } = data;
       dispatch({
@@ -96,9 +105,22 @@ const AppProvider = ({ children }) => {
         payload: { user, location, alertText },
       });
     } catch (error) {
-      // Handle cases where error.response might be undefined (network errors, CORS, etc.)
-      const errorMessage =
+      console.log("❌ Login/Register failed:", error);
+      console.log("❌ Error response:", error.response?.data);
+      console.log("❌ Error status:", error.response?.status);
+
+      // Check if it's a CORS or cookie issue
+      let errorMessage =
         error.response?.data?.msg || error.message || "Something went wrong";
+
+      if (error.message?.includes("CORS") || error.response?.status === 0) {
+        errorMessage =
+          "Network error: Please check if you're in incognito mode. Try using a regular browser window.";
+      } else if (error.response?.status === 401) {
+        errorMessage =
+          "Authentication failed. Please try again or use a regular browser window if you're in incognito mode.";
+      }
+
       dispatch({
         type: SETUP_USER_ERROR,
         payload: { msg: errorMessage },
@@ -261,9 +283,12 @@ const AppProvider = ({ children }) => {
   };
 
   const getCurrentUser = async () => {
+    console.log("👤 Starting getCurrentUser");
     dispatch({ type: GET_CURRENT_USER_BEGIN });
     try {
       const { data } = await authFetch("/auth/getCurrentUser");
+      console.log("👤 getCurrentUser successful:", data);
+
       const { user, location } = data;
 
       dispatch({
@@ -271,6 +296,10 @@ const AppProvider = ({ children }) => {
         payload: { user, location },
       });
     } catch (error) {
+      console.log("❌ getCurrentUser failed:", error);
+      console.log("❌ Error response:", error.response?.data);
+      console.log("❌ Error status:", error.response?.status);
+
       // Handle cases where error.response might be undefined (network errors, CORS, etc.)
       if (error.response?.status === 401) return;
       logoutUser();

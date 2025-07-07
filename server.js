@@ -86,6 +86,9 @@ app.use(
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "Cookie", "Set-Cookie"],
     exposedHeaders: ["Set-Cookie"],
+    // Add preflightContinue to handle preflight requests better
+    preflightContinue: false,
+    optionsSuccessStatus: 204,
   })
 );
 
