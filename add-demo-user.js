@@ -25,30 +25,30 @@ const addDemoUser = async () => {
     console.log("✅ Connected to MongoDB Atlas");
 
     // Check if demo user already exists
-    const existingUser = await User.findOne({ email: "demo@test.com" });
+    const existingUser = await User.findOne({ email: "gudiya@gmail.com" });
     if (existingUser) {
-      console.log("ℹ️  Demo user already exists");
+      console.log("ℹ️  User gudiya@gmail.com already exists");
       return;
     }
 
     // Create demo user
-    const hashedPassword = await bcrypt.hash("demo123", 10);
+    const hashedPassword = await bcrypt.hash("gudiya", 10);
 
     const demoUser = await User.create({
-      name: "Demo User",
-      email: "demo@test.com",
+      name: "Gudiya",
+      email: "gudiya@gmail.com",
       password: hashedPassword,
-      location: "Demo City",
+      location: "My City",
     });
 
-    console.log("✅ Demo user created successfully!");
-    console.log("📧 Email: demo@test.com");
-    console.log("🔑 Password: demo123");
+    console.log("✅ User created successfully!");
+    console.log("📧 Email: gudiya@gmail.com");
+    console.log("🔑 Password: gudiya");
     console.log("👤 Name:", demoUser.name);
 
     process.exit(0);
   } catch (error) {
-    console.log("❌ Error creating demo user:", error.message);
+    console.log("❌ Error creating user:", error.message);
     process.exit(1);
   }
 };
