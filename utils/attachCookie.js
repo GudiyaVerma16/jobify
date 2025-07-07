@@ -5,8 +5,8 @@ const attachCookie = ({ res, token }) => {
     httpOnly: true,
     expires: new Date(Date.now() + oneDay),
     secure: process.env.NODE_ENV === "production",
-    // Use 'lax' for better cross-origin compatibility while still being secure
-    sameSite: "lax",
+    // Use 'none' for cross-origin requests in production, 'lax' for development
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
   };
 
   // In production, we might need to set the domain explicitly

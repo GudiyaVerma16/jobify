@@ -239,6 +239,66 @@ const Register = () => {
           >
             Test Login Endpoint
           </button>
+
+          <button
+            type="button"
+            className="btn btn-block"
+            onClick={async () => {
+              try {
+                console.log("🧪 Testing cookie transmission...");
+                // First, try to login
+                const loginResponse = await fetch(
+                  "https://jobify-33p6.onrender.com/api/v1/auth/login",
+                  {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/json",
+                    },
+                    credentials: "include",
+                    body: JSON.stringify({
+                      email: "testUser@test.com",
+                      password: "secret",
+                    }),
+                  }
+                );
+
+                if (loginResponse.ok) {
+                  console.log(
+                    "✅ Login successful, now testing cookie transmission"
+                  );
+
+                  // Then immediately try to get current user
+                  const userResponse = await fetch(
+                    "https://jobify-33p6.onrender.com/api/v1/auth/getCurrentUser",
+                    {
+                      credentials: "include",
+                    }
+                  );
+
+                  console.log("🧪 User response status:", userResponse.status);
+                  const userData = await userResponse.json();
+                  console.log("🧪 User response data:", userData);
+
+                  if (userResponse.ok) {
+                    alert(
+                      "✅ Cookie transmission successful! User authenticated."
+                    );
+                  } else {
+                    alert(
+                      "❌ Cookie transmission failed. User not authenticated."
+                    );
+                  }
+                } else {
+                  alert("❌ Login failed");
+                }
+              } catch (error) {
+                console.error("❌ Cookie transmission test failed:", error);
+                alert("Cookie transmission test failed - check console");
+              }
+            }}
+          >
+            Test Cookie Transmission
+          </button>
         </div>
         <p>
           {values.isMember ? "Not a member yet?" : "Already a member?"}

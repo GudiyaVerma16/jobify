@@ -43,7 +43,7 @@ router.get("/test-cookie", (req, res) => {
     httpOnly: true,
     expires: new Date(Date.now() + 1000 * 60 * 60), // 1 hour
     secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
   });
 
   console.log("🍪 Test cookie set");
