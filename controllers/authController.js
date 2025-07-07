@@ -28,20 +28,34 @@ const register = async (req, res) => {
   });
 };
 const login = async (req, res) => {
+  console.log("🔐 Login endpoint called");
+  console.log("🔐 Request body:", {
+    email: req.body.email,
+    password: req.body.password ? "***" : "missing",
+  });
+  console.log("🔐 Request headers:", req.headers);
+
   const { email, password } = req.body;
   if (!email || !password) {
+    console.log("❌ Login failed: Missing email or password");
     throw new BadRequestError("Please provide all values");
   }
+
+  console.log("🔐 Looking up user with email:", email);
   const user = await User.findOne({ email }).select("+password");
   if (!user) {
+    console.log("❌ Login failed: User not found");
     throw new UnAuthenticatedError("Invalid Credentials");
   }
 
+  console.log("🔐 User found, checking password");
   const isPasswordCorrect = await user.comparePassword(password);
   if (!isPasswordCorrect) {
+    console.log("❌ Login failed: Invalid password");
     throw new UnAuthenticatedError("Invalid Credentials");
   }
 
+  console.log("🔐 Password correct, creating JWT token");
   const token = user.createJWT();
   console.log("🔐 Login successful for user:", user.email);
   console.log("🔐 Setting cookie with token:", token.substring(0, 20) + "...");
@@ -53,6 +67,7 @@ const login = async (req, res) => {
 
   user.password = undefined;
 
+  console.log("🔐 Sending successful login response");
   res.status(StatusCodes.OK).json({ user, location: user.location });
 };
 const updateUser = async (req, res) => {

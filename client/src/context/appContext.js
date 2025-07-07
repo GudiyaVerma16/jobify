@@ -91,9 +91,11 @@ const AppProvider = ({ children }) => {
       email: currentUser.email,
       name: currentUser.name,
     });
+    console.log("🔐 Making request to:", `/auth/${endPoint}`);
 
     dispatch({ type: SETUP_USER_BEGIN });
     try {
+      console.log("🔐 Sending login/register request...");
       const { data } = await authFetch.post(`/auth/${endPoint}`, currentUser);
 
       console.log("🔐 Login/Register successful, response data:", data);
@@ -108,6 +110,7 @@ const AppProvider = ({ children }) => {
       console.log("❌ Login/Register failed:", error);
       console.log("❌ Error response:", error.response?.data);
       console.log("❌ Error status:", error.response?.status);
+      console.log("❌ Error config:", error.config);
 
       // Check if it's a CORS or cookie issue
       let errorMessage =

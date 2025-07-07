@@ -206,6 +206,39 @@ const Register = () => {
           >
             Check Environment Variables
           </button>
+
+          <button
+            type="button"
+            className="btn btn-block"
+            onClick={async () => {
+              try {
+                console.log("🧪 Testing login endpoint...");
+                const response = await fetch(
+                  "https://jobify-33p6.onrender.com/api/v1/auth/login",
+                  {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/json",
+                    },
+                    credentials: "include",
+                    body: JSON.stringify({
+                      email: "testUser@test.com",
+                      password: "secret",
+                    }),
+                  }
+                );
+                const data = await response.json();
+                console.log("🧪 Login test response:", data);
+                console.log("🧪 Response headers:", response.headers);
+                alert("Check console for login test results");
+              } catch (error) {
+                console.error("❌ Login test failed:", error);
+                alert("Login test failed - check console");
+              }
+            }}
+          >
+            Test Login Endpoint
+          </button>
         </div>
         <p>
           {values.isMember ? "Not a member yet?" : "Already a member?"}
